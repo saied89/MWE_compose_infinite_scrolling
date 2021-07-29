@@ -21,7 +21,7 @@ import kotlinx.coroutines.flow.Flow
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val flow = Pager(PagingConfig(10), 0) {
+        val flow = Pager(PagingConfig(30), 0) {
             DaysMockPagingSource
         }.flow
         setContent {
@@ -39,14 +39,19 @@ class MainActivity : ComponentActivity() {
 fun InfiniteScroll(flow: Flow<PagingData<String>>) {
     val items = flow.collectAsLazyPagingItems()
     LazyColumn(Modifier.fillMaxWidth()) {
-        items(items) {
+        items(
+            items,
+            key = {
+                it
+            }
+        ) {
             Text(text = it!!)
         }
     }
 }
 
-
 object DaysMockPagingSource : PagingSource<Int, String>() {
+
     override fun getRefreshKey(state: PagingState<Int, String>): Int? {
         val anchorPosition = state.anchorPosition
         return if (anchorPosition != null)
